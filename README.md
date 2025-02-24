@@ -23,6 +23,18 @@ By leveraging automation tools, I created a scalable and cost-effective Kubernet
 > [!WARNING]
 > From this point I assume that you already have installed Terraform, ansible and cmake, so make shure you already have it :)
 
+### Resources that will be deployed in your Hetzner Account
+- 1 network 
+- 1 subnet
+- 1 firewall
+- 1 SSH key
+- 2 Placement group
+- x Servers
+
+### Resources created by terraform in you local environment
+- ansible inventory file `ansible/hosts`
+- ansible variables file `ansible/playbooks/group_vars/masters.yml`
+
 ## Instalation
 ---
 
