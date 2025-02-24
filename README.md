@@ -39,7 +39,7 @@ By leveraging automation tools, I created a scalable and cost-effective Kubernet
 ---
 
 ### Clone the repository from GitHub
-1. Create your terraform variables
+1. Clone the repo
 ```bash
 git clone https://github.com/carlosgrillet/hetzner-kubernetes-cluster.git
 ```
@@ -94,22 +94,22 @@ make apply
 
 ## Cluster configuration
 ---
-7. Initialize the cluster by configuring the first control-plane
+1. Initialize the cluster by configuring the first control-plane
 ```bash
 make cluster-init
 ```
 
-8. Add other control-plane nodes to the cluster (if your choose more than 1 master in your .tfvars)
+2. Add other control-plane nodes to the cluster (if your choose more than 1 master in your .tfvars)
 ```bash
 make join-masters
 ```
 
-9. Add workers to the cluster
+3. Add workers to the cluster
 ```bash
 make join-workers
 ```
 
-10. Get the kubecofig file to your system
+4. Get the kubecofig file to your system
 ```bash
 make get-kubeconfig
 ```
@@ -147,7 +147,7 @@ certificatesResolvers:
       tlsChallenge: true
 ```
 
-11. Install traefik in the cluster
+1. Install traefik in the cluster
 ```bash
 make install-traefik
 ```
