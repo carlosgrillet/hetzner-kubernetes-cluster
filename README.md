@@ -151,3 +151,13 @@ certificatesResolvers:
 ```bash
 make install-traefik
 ```
+> [!WARNING]
+> This will create a load balancer in you account
+
+## Destroying the cluster
+---
+If you installed traefik using this repo, you first need to remove the laod balancer created by traefik, now 
+to destroy the cluster is as simple as just run this command
+```bash
+make destroy
+```
