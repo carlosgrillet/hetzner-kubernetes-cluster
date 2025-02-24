@@ -135,7 +135,7 @@ certificatesResolvers:
       tlsChallenge: true
 ```
 
-7. Install traefik in the cluster
+11. Install traefik in the cluster
 ```bash
 make install-traefik
 ```
