@@ -1,0 +1,9 @@
+hcloud_token = "yourhcloudtoken"
+ssh_key      = "path/to/your/ssh_key.pub" 
+location     = "fsn1"
+
+master_count = 1
+master_server_type = "cx22"
+
+worker_count = 1
+worker_server_type = "cx22"

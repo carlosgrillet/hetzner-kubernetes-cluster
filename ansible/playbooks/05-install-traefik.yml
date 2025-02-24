@@ -1,0 +1,42 @@
+---
+- name: Install Traefik on the cluster
+  hosts: master0
+  become: yes
+  tasks:
+
+    - name: Install helm repository
+      shell: |
+        helm repo add traefik https://traefik.github.io/charts
+        helm repo update
+
+    - name: Copy traefik values file
+      copy:
+        src: ../../kubernetes/traefik-values.yaml
+        dest: ~/traefik-values.yaml
+
+    - name: Install traefik
+      shell: |
+        helm upgrade \
+          --install traefik traefik/traefik \
+          --create-namespace \
+          --namespace traefik \
+          --values traefik-values.yaml \
+          --kubeconfig /etc/rancher/k3s/k3s.yaml
+
+    - name: Patch traefik loadbalancer location
+      shell: |
+        kubectl -n traefik patch service traefik \
+          --type json \
+          -p '[{"op":"add","path":"/metadata/annotations/load-balancer.hetzner.cloud~1location","value":"{{ location }}"}]'
+
+    - name: Patch traefik loadbalancer name
+      shell: |
+        kubectl -n traefik patch service traefik \
+          --type json \
+          -p '[{"op":"add","path":"/metadata/annotations/load-balancer.hetzner.cloud~1name","value":"traefik"}]'
+
+    - name: Patch traefik loadbalancer use-private-ip
+      shell: |
+        kubectl -n traefik patch service traefik \
+          --type json \
+          -p '[{"op":"add","path":"/metadata/annotations/load-balancer.hetzner.cloud~1use-private-ip","value":"true"}]'

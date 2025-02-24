@@ -1,0 +1,21 @@
+---
+- name: Join workers to the cluster
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: yes
+
+    - name: Configure k3s and join workers to the cluster
+      shell: |
+        curl -sfL https://get.k3s.io | sh -s - agent \
+          --server https://10.0.1.1:6443 \
+          --node-name="$(hostname -f)" \
+          --flannel-iface=enp7s0 \
+          --kubelet-arg="cloud-provider=external" \
+          --token={{ cluster_token }}

@@ -1,0 +1,25 @@
+---
+- name: Join masters to the cluster
+  hosts: masters:!master0
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: yes
+
+    - name: Configure k3s and join master to the cluster
+      shell: |
+        curl -sfL https://get.k3s.io | sh -s - server \
+          --server https://10.0.1.1:6443 \
+          --disable-cloud-controller \
+          --disable local-storage \
+          --node-name="$(hostname -f)" \
+          --flannel-iface=enp7s0 \
+          --kubelet-arg="cloud-provider=external" \
+          --secrets-encryption \
+          --disable=traefik \
+          --token={{ cluster_token }}

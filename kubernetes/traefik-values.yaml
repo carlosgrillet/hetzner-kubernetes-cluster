@@ -1,0 +1,15 @@
+ports:
+  web:
+    redirections:
+      to: websecure
+      schema: https
+  websecure:
+    tls:
+      enabled: true
+      certResolver: letsencrypt
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: carlosgrillet@protonmail.com
+      storage: /data/acme.json
+      tlsChallenge: true

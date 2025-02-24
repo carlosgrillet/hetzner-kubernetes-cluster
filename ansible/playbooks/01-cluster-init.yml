@@ -1,0 +1,88 @@
+---
+- name: Init the cluster
+  hosts: master0
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: yes
+
+    - name: Configure k3s and init the cluster
+      shell: |
+        curl -sfL https://get.k3s.io | sh -s - server \
+          --cluster-init \
+          --disable-cloud-controller \
+          --disable local-storage \
+          --node-name="$(hostname -f)" \
+          --flannel-iface=enp7s0 \
+          --kubelet-arg="cloud-provider=external" \
+          --secrets-encryption \
+          --disable=traefik
+
+    - name: Create aliases for kubectl
+      shell: |
+        echo "alias k='kubectl'" >> ~/.bashrc
+        echo "alias ks='kubectl -n kube-system'" >> ~/.bashrc
+
+    - name: Get the cluster token
+      shell: cat /var/lib/rancher/k3s/server/node-token
+      register: cluster_token
+
+    - name: Save cluster token to playbooks/group_vars/all.yml
+      become: no
+      delegate_to: localhost
+      ansible.builtin.copy:
+        dest: "./group_vars/all.yml"
+        content: "cluster_token: {{ cluster_token.stdout }}"
+
+    - name: Install Helm
+      shell: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    - name: Install helm repositories
+      shell: |
+        helm repo add hcloud https://charts.hetzner.cloud
+        helm repo update
+
+    - name: Add hcloud token
+      shell: |
+        kubectl -n kube-system create secret generic hcloud \
+          --from-literal=token={{ hcloud_token }} \
+          --from-literal=network={{ hcloud_network }}
+
+    - name: Install hccm
+      shell: |
+        helm upgrade \
+          --install hccm hcloud/hcloud-cloud-controller-manager \
+          -n kube-system \
+          --kubeconfig /etc/rancher/k3s/k3s.yaml
+
+    - name: Patch hccm to use internal network
+      shell: |
+        kubectl patch deployment hcloud-cloud-controller-manager \
+          -n kube-system \
+          --type json \
+          -p '[
+            {"op": "add", "path": "/spec/template/spec/containers/0/env/-", "value": {
+              "name": "HCLOUD_NETWORK",
+              "valueFrom": {
+                "secretKeyRef": {
+                  "key": "network",
+                  "name": "hcloud"
+                }
+              }
+            }}
+          ]'
+
+    - name: Install hcloud-csi
+      shell: |
+        helm upgrade \
+          --install hcloud-csi hcloud/hcloud-csi \
+          -n kube-system \
+          --kubeconfig /etc/rancher/k3s/k3s.yaml

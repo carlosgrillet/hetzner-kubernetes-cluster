@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+  annotations:
+    load-balancer.hetzner.cloud/location: fsn1
+    load-balancer.hetzner.cloud/name: renitotontitolb
+spec:
+  selector:
+    app: example
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer

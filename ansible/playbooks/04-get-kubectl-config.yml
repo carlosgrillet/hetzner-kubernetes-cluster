@@ -1,0 +1,23 @@
+---
+- name: Get kubectl config
+  hosts: master0
+  become: yes
+  tasks:
+    - name: Get kubectl config
+      shell: cat /etc/rancher/k3s/k3s.yaml
+      register: kubectl_config
+
+    - name: Display kubectl config
+      debug:
+        msg: "{{ kubectl_config.stdout }}"
+
+    - name: Write kubectl config to a local file
+      delegate_to: localhost
+      become: no
+      ansible.builtin.copy:
+        content: "{{ kubectl_config.stdout }}"
+        dest: "~/cluster-kubeconfig.yaml"
+
+    - name: Print kubeconfig location
+      debug:
+        msg: "kubeconfig file saved to ~/cluster-kubeconfig.yaml"
