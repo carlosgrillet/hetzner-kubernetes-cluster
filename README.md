@@ -48,7 +48,7 @@ or using ssh
 git clone git@github.com:carlosgrillet/hetzner-kubernetes-cluster.git
 ```
 
-### Prepare you terraform
+### Prepare your terraform
 2. Create your terraform variables
 ```bash
 cp .tfvars.example .tfvars
