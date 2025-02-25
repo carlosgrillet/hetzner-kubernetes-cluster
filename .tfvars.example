@@ -2,6 +2,14 @@ hcloud_token = "yourhcloudtoken"
 ssh_key      = "path/to/your/ssh_key.pub" 
 location     = "fsn1"
 
+# Available locations
+# Finland Helsinki: hel1
+# Germany Falkenstein: fsn1
+# Germany Nuremberg: nbg1
+# Singapore: sin
+# USA Ashburn: ash
+# USA Hillsboro: hil
+
 master_count = 1
 master_server_type = "cx22"
 
