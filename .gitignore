@@ -1,19 +1,17 @@
+.terraform/
 terraform.tfstate
 terraform.tfstate.backup
-
-.terraform/
-
 .tfvars
-
 .terraform.lock.hcl
+
+ansible/playbooks/group_vars/*
+ansible/hosts
 
 *.swp
 *.swo
 *.log
 *.tmp
 *.bak
-
-ssh-keys/*
 
 *~
 

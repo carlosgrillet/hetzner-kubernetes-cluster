@@ -161,3 +161,36 @@ to destroy the cluster is as simple as just run this command
 ```bash
 make destroy
 ```
+
+## Deploy a LoadBalancer
+---
+
+To deploy a loadbalancer, you will have to add the annotation `load-balancer.hetzner.cloud/use-private-ip: "true"` 
+as we are using a private network to communicate nodes. With this connnfiguration the load balancer in Hetzner 
+will take a private IP and you will be able to reach the service from outside using the public IP assigned to 
+you load balancer. Here you have an example of how to create a service type LoadBalancer.
+
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-lb
+  annotations:
+    load-balancer.hetzner.cloud/location: fsn1
+    load-balancer.hetzner.cloud/name: lb-name
+    load-balancer.hetzner.cloud/use-private-ip: "true"
+spec:
+  selector:
+    # add here the label to match your app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - name: https
+      port: 443
+      targetPort: 9090
+  type: LoadBalancer
+```
+
+After deploying the lb, you will have to wait for a few minutes for it to take effect, so be patient :)
