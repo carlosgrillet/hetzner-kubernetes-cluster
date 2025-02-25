@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-ingressroute
+  labels:
+    # your labels here
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`<your-domain-here.com>`) # Replace with your domain.
+    kind: Rule
+    services:
+    - name: service-name # put here the name of your service
+      port: 80           # put here the port that your service is using
+  tls:
+    certResolver: letsencrypt
