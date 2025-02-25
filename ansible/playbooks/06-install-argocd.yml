@@ -1,0 +1,11 @@
+---
+- name: Install ArgoCD on the cluster
+  hosts: master0
+  become: yes
+  tasks:
+
+    - name: Create ArgoCD namespace in the cluster
+      shell: kubectl create namespace argocd
+
+    - name: Install ArgoCD stable version
+      shell: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml

@@ -68,4 +68,11 @@ install-traefik:
 		-i hosts \
 		playbooks/05-install-traefik.yml
 
-.PHONY: all init validate fmt plan apply destroy cluster-init join-masters join-workers get-kubeconfig install-traefik
+## Install ArgoCD in the cluster
+install-argocd:
+	@echo "==> Installing ArgoCD on the cluster..."
+	cd ansible && ansible-playbook \
+		-i hosts \
+		playbooks/06-install-argocd.yml
+
+.PHONY: all init validate fmt plan apply destroy cluster-init join-masters join-workers get-kubeconfig install-traefik install-argocd
