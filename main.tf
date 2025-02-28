@@ -115,12 +115,12 @@ resource "hcloud_server" "workers" {
 
 output "master_public_ipv4" {
   description = "The public IPv4 address of the master node."
-  value       = [for master in hcloud_server.masters : master.ipv4_address]
+  value       = [for master in hcloud_server.masters : "${master.name} ${master.ipv4_address}"]
 }
 
 output "worker_public_ipv4" {
   description = "The public IPv4 addresses of the Kubernetes worker nodes."
-  value       = [for worker in hcloud_server.workers : worker.ipv4_address]
+  value       = [for worker in hcloud_server.workers : "${worker.name} ${worker.ipv4_address}"]
 }
 
 resource "local_file" "ansible_inventory" {
@@ -128,13 +128,10 @@ resource "local_file" "ansible_inventory" {
   file_permission = "664"
   content         = <<EOL
 [masters]
-%{for i, ip in hcloud_server.masters.*.ipv4_address~}
-master${i} ansible_host=${ip} ansible_user=root
-%{endfor}
+${join("\n", [for i, ip in hcloud_server.masters.*.ipv4_address : "master${i} ansible_host=${ip} ansible_user=root"])}
+
 [workers]
-%{for i, ip in hcloud_server.workers.*.ipv4_address~}
-worker${i} ansible_host=${ip} ansible_user=root
-%{endfor}
+${join("\n", [for i, ip in hcloud_server.workers.*.ipv4_address : "worker${i} ansible_host=${ip} ansible_user=root"])}
 EOL
 }
 
